@@ -1,8 +1,8 @@
 import itertools
 import multiprocessing
 import numpy as np
-from count_table import NoisedCountTable, BlockResult, calculate_mean_and_aggregation_error, implicit_ae
-from query import Query, QueryCondition
+from src.hdpview.count_table import NoisedCountTable, BlockResult, calculate_mean_and_aggregation_error, implicit_ae
+from src.hdpview.query import Query, QueryCondition
 import matplotlib.pyplot as plt
 
 ## PrivTree
@@ -161,7 +161,7 @@ def count_domain_dict(domain):
     cardinality_list = []
     for val in domain:
         cardinality_list.append(val[1] - val[0] + 1)
-    return np.prod(cardinality_list, dtype=np.float)
+    return np.prod(cardinality_list, dtype=float)
 
 
 def plot_data(data, attrs, noised_data):

@@ -12,11 +12,10 @@ from src.hdpview import *
 from src.hdpview.dataset import Dataset
 from src.hdpview.workload_generator import *
 
-from src.competitors_runs import hdp_view_run
-from src.competitors_runs import run_privat_tree
+from src.competitors_runs import privBayes_run
 
 if __name__ == '__main__':
-    for name_dataset_exp in tqdm(["nume-adult","bitcoin","electricity"],"Dataset loop : ",leave=False):
+    for name_dataset_exp in tqdm(["nume-adult","bitcoin","electricity","trafic"],"Dataset loop : ",leave=False):
 
         root_dir = Path('__file__').resolve().parent
         data_dir = root_dir / "data" / "preprocessed" / name_dataset_exp
@@ -41,25 +40,12 @@ if __name__ == '__main__':
 
         for j in tqdm(range(len(direct_workloads)),"direct-workload loop ",leave=True):
         
-                    direct_workload_name, direct_workload = direct_workloads[j]
-                    rmse_g,re_g,compressions,view_times,workloads_times = run_privat_tree.run(data,epsilon,direct_workload,True)
-                    data_sensi = {
+            direct_workload_name, direct_workload = direct_workloads[j]
+            rmse_g,re_g,view_times,workloads_times = privBayes_run.run_priv_bayes(data,direct_workload,False)
+            data_sensi = {
                                     "RMSE" : rmse_g,
                                     "RE" : re_g,
-                                    "CR" : compressions,
                                     "ET" : view_times,
                                 }
-                    df = pd.DataFrame(data_sensi)
-                    df.to_csv("exp-PrivTree-"+name_dataset_exp+"-"+direct_workload_name+".csv")
-
-                    rmse_g,re_g,compressions,view_times,workloads_times = hdp_view_run.run(data,epsilon,direct_workload,True)
-                    data_sensi = {
-                                        "RMSE" : rmse_g,
-                                        "RE" : re_g,
-                                        "CR" : compressions,
-                                        "ET" : view_times,
-                                    }
-                    df = pd.DataFrame(data_sensi)
-                    df.to_csv("exp-HDPView-"+name_dataset_exp+"-"+direct_workload_name+".csv")
-
-                
+            df = pd.DataFrame(data_sensi)
+            df.to_csv("exp-PrivBayes-"+name_dataset_exp+"-"+direct_workload_name+".csv")

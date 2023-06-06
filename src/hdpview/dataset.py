@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import json
-from domain import Domain
+from src.hdpview.domain import Domain
 
 class Dataset:
     def __init__(self, df, domain):

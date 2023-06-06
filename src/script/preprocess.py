@@ -8,8 +8,7 @@ import datetime
 import argparse
 
 
-root_dir = Path('__file__').resolve().parent.parent.parent
-root_dir = root_dir / "alaouir" / "cubecompressiondp"
+root_dir = Path('__file__').resolve().parent
 raw_datasets_dir = root_dir / "data" / "raw"
 preprocessd_datasets_dir = root_dir / "data" / "preprocessed"
 
@@ -29,7 +28,7 @@ adult_columns = ["age","workclass","fnlwgt","education","education-num","marital
 
 def args_parse():
     parser = argparse.ArgumentParser(description='Preprocess data')
-    parser.add_argument('--dataset', type=str, help="used dataset [adult, small-adult, nume-adult, trafic, bitcoin, electricity, phoneme, jm, adding-adult, all] (default: all)", default="all")
+    parser.add_argument('--dataset', type=str, help="used dataset [nume-adult, trafic, bitcoin, electricity] (default: all)", default="all")
     parser.add_argument('--seed', type=int, default=0)
     args = parser.parse_args()
     return args
@@ -253,26 +252,6 @@ D UP DOWN
 
         with open(preprocessd_datasets_dir / "electricity" / domain_info_name, mode='w') as f:
             f.write(domain_info)
-
-    if args.dataset == "all" or args.dataset == "phoneme":
-        dataset_dir = raw_datasets_dir / "phoneme"
-        df = pd.read_csv(dataset_dir / "php8Mz7BG.csv")
-
-        write_data(preprocessd_datasets_dir, 'phoneme', df, 10, args.seed)
-
-        domain_info ="""\
-C -2.94 3.83
-C -3.1 3.7
-C -2.8 2.7
-C -2.5 3.1
-C -2.4 4.6
-D 1 2
-"""
-
-        with open(preprocessd_datasets_dir / "phoneme" / domain_info_name, mode='w') as f:
-            f.write(domain_info)
-    
-
     if args.dataset == "all" or args.dataset == "trafic":
         dataset_dir = raw_datasets_dir / 'trafic'
         df = pd.read_csv(dataset_dir / 'Metro_Interstate_Traffic_Volume.csv')
@@ -297,67 +276,3 @@ C 0 7280
 
         with open(preprocessd_datasets_dir / "trafic" / domain_info_name, mode='w') as f:
             f.write(domain_info)
-
-
-    if args.dataset == "all" or args.dataset == "jm":
-        dataset_dir = raw_datasets_dir / 'jm'
-        df = pd.read_csv(dataset_dir / 'jm1.csv')
-        df = df.dropna()
-
-        df = df[df['uniq_Op'] != '?']
-        df = df[df['uniq_Opnd'] != '?']
-        df = df[df['total_Op'] != '?']
-        df = df[df['total_Opnd'] != '?']
-        df = df[df['branchCount'] != '?']
-
-        df['uniq_Op'] = df['uniq_Op'].map(lambda x: float(x))
-        df['uniq_Opnd'] = df['uniq_Opnd'].map(lambda x: float(x))
-        df['total_Op'] = df['total_Op'].map(lambda x: float(x))
-        df['total_Opnd'] = df['total_Opnd'].map(lambda x: float(x))
-        df['branchCount'] = df['branchCount'].map(lambda x: float(x))
-
-        write_data(preprocessd_datasets_dir, 'jm', df, 10, args.seed)
-
-        domain_info =f"""\
-C 1.0 3442.0
-C 1.0 470.0
-C 1.0 165.0
-C 1.0 402.0
-C 0.0 8441.0
-C 0.0 80843.08
-C 0.0 1.3
-C 0.0 418.2
-C 0.0 569.78
-C 0.0 31079782.27
-C 0.0 26.95
-C 0.0 1726654.57
-C 0 2824
-C 0 344
-C 0 447
-C 0 108
-C 0.0 411.0
-C 0.0 1026.0
-C 0.0 5420.0
-C 0.0 3021.0
-C 1.0 826.0
-D False True
-"""
-
-        with open(preprocessd_datasets_dir / "jm" / domain_info_name, mode='w') as f:
-            f.write(domain_info)
-
-            
-    if args.dataset == "all" or args.dataset == "gowalla":
-        dataset_dir = raw_datasets_dir / 'gowalla'
-        df = pd.read_csv(dataset_dir / "loc-gowalla_totalCheckins.txt", header=None, sep='\t')
-        df = df.drop(columns=[0])
-        df.columns = ['time', 'lat', 'lng', 'location_id']
-        df = df[df['lat'] <= 90]
-        df['time'] = df['time'].map(lambda x: datetime.datetime.strptime(x, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=datetime.timezone.utc).timestamp())
-        # write_data(data_dir, 'gowalla-4d', df, 100)
-
-        df = df.drop(columns=['location_id'])
-        # write_data(data_dir, 'gowalla-3d', df, 1000)
-
-        df = df.drop(columns=['time'])
-        write_data(preprocessd_datasets_dir, 'gowalla-2d', df, 1000, args.seed)

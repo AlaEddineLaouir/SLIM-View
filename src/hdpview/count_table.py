@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from query import QueryCondition
+from src.hdpview.query import QueryCondition
 
 """
 CountTable is data model in DP-Mondrian cutting.
@@ -85,7 +85,7 @@ class CountTable:
             assert self.domain_dict.get(condition.attribute), "Error: No attribute"
             boolean_index = boolean_index & (self.domain_dict[condition.attribute][0] + condition.start <= self.pd_table.index.get_level_values(condition.attribute)) & (self.pd_table.index.get_level_values(condition.attribute) <= self.domain_dict[condition.attribute][0] + condition.end)
         
-        #values = self.mesure_table[boolean_index]['Mesure']
+        
         return np.sum(boolean_index)
 
     def range_query(self, query):

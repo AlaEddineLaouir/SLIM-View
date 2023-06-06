@@ -1,14 +1,17 @@
 import sys
-sys.path.append('../../competitors/hdmm/src')
+from pathlib import Path
+sys.path.append(str(Path('').resolve()))
 
 sys.path.append('/Users/alaeddinelaouir/PhDProjects/HDPView/src/ektelo')
 
-#sys.path.append('/home/alaouir/cubecompressiondp/src/ektelo')
 import numpy as np
-import hdmm.templates, hdmm.workload, hdmm.matrix
+from src.competitors.hdmm.src import hdmm as hdmm
+# from src.competitors.hdmm.src.hdmm import templates
+# from src.competitors.hdmm.src.hdmm import workload
+# from src.competitors.hdmm.src.hdmm import matrix
 import ektelo.workload
 import itertools
-from query import Query, QueryCondition
+from src.hdpview.query import Query, QueryCondition
 
 
 ALL_RANGE    = lambda k: f"{k}-way-All-Range"

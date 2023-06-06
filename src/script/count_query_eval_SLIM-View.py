@@ -1,5 +1,6 @@
 import sys
-sys.path.append('../../src')
+from pathlib import Path
+sys.path.append(str(Path('').resolve()))
 
 import pandas as pd
 
@@ -7,39 +8,27 @@ from tqdm import tqdm
 from pathlib import Path
 
 import argparse
-from dataset import Dataset
-from dataset import Dataset
-from workload_generator import *
+from src.hdpview.dataset import Dataset
+from src.hdpview.workload_generator import *
 
 
-from ours import SDPCube
+from src.SLIMView import SLIMView
 
 
 if __name__ == "__main__":
 
-        parser = argparse.ArgumentParser(description='Evaluate count range queries for different datasets.')
-        parser.add_argument('--dataset', type=str, help="used dataset [adult, small-adult, nume-adult, trafic, bitcoin, electricity, phoneme, jm, adding-adult] (default: adult)", default="adult")
-        parser.add_argument('--alg', type=str, help="used algorithm [all, hdpview, dawa, hdmm, identity, privbayes] (default:  all)", default="all")
-        parser.add_argument('--epsilon', type=float, help="privacy budget (default: 1.0)", default=1.0)
-        parser.add_argument('--workload', type=str, help="workloads that are used in experiments [small_set, all] (default: all)", default="all")
-        parser.add_argument('--times', type=int, help="number of synthetic dataset (default: 10)", default=10)
-        args = parser.parse_args()
+        for name_dataset_exp in tqdm(["nume-adult","bitcoin","traffic","electricity"],"Dataset loop : ",leave=True):
 
-
-        for name_dataset_exp in tqdm(["bitcoin","traffic","electricity","nume-adult"],"Dataset loop : ",leave=True):
-
-            root_dir = Path('__file__').resolve().parent.parent.parent
+            root_dir = Path('__file__').resolve().parent
             data_dir = root_dir / "data" / "preprocessed" / name_dataset_exp
 
             data = Dataset.load(data_dir / 'data.csv', data_dir / 'domain.json')
 
             epsilon = 0.1
-            delta = 0.001
 
         
 
-            direct_workloads = [] #  using direct representation, instead using matrix representation for range query for speed up
-            implicit_workloads = []
+            direct_workloads = [] 
 
         
                 
@@ -55,7 +44,7 @@ if __name__ == "__main__":
         
                     direct_workload_name, direct_workload = direct_workloads[i]
 
-                    rmse_g,re_g,compressions,view_times,workloads_times = SDPCube.run(data,0.4,0.9,direct_workload,0.5,epsilon,delta,0.5,name_dataset_exp,direct_workload_name,False,80,False)
+                    rmse_g,re_g,compressions,view_times,workloads_times = SLIMView.run(data,0.05,direct_workload,0.5,epsilon,0.5,False)
                     data_sensi = {
                                         "RMSE" : rmse_g,
                                         "RE" : re_g,

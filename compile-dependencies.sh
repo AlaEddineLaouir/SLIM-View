@@ -3,5 +3,5 @@
 cd ./src/ektelo/ektelo/algorithm/
 ./setup.sh
 
-cd ./competitors/privbayes/
+cd ./src/competitors/privbayes/
 make
